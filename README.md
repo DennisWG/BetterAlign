@@ -1,7 +1,7 @@
 # BetterAlign
 A better version of Align for Vanilla WoW.
 
-
+Demo video:
 [![Example Video](https://img.youtube.com/vi/s5wJtyAavAQ/0.jpg)](https://www.youtube.com/watch?v=s5wJtyAavAQ)
 
 ### Installation
