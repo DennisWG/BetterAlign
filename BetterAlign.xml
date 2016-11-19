@@ -1,0 +1,227 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+    <Frame name="BetterAlignVerticalFrame" virtual="true" parent="UIParent" enableMouse="true" strata="HIGH" movable="true" toplevel="true">
+        <Size>
+			<AbsDimension x="2" y="0"/>
+		</Size>
+		<Anchors>
+			<Anchor point="CENTER">
+				<Offset>
+					<AbsDimension x="0" y="0"/>
+				</Offset>
+			</Anchor>
+		</Anchors>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture name="$parentTexture" >
+                    <Color a="1" r="0" g="1" b="0" />
+                </Texture>
+            </Layer>
+        </Layers>
+        <Scripts>
+            <OnLoad>
+                this:SetHeight(GetScreenHeight() * 4);
+                this:RegisterForDrag("LeftButton");
+            </OnLoad>
+        </Scripts>
+    </Frame>
+    
+    <Frame name="BetterAlignHorizontalFrame" virtual="true" parent="UIParent" enableMouse="true" strata="HIGH" movable="true" toplevel="true">
+        <Size>
+			<AbsDimension x="0" y="2"/>
+		</Size>
+		<Anchors>
+			<Anchor point="CENTER">
+				<Offset>
+					<AbsDimension x="0" y="0"/>
+				</Offset>
+			</Anchor>
+		</Anchors>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture name="$parentTexture" >
+                    <Color a="1" r="0" g="1" b="0" />
+                </Texture>
+            </Layer>
+        </Layers>
+        <Scripts>
+            <OnLoad>
+                this:SetWidth(GetScreenWidth() * 4);
+                this:RegisterForDrag("LeftButton");
+            </OnLoad>
+        </Scripts>
+    </Frame>
+
+	<Frame name="BetterAlignOptionsPanel" toplevel="true" movable="true" parent="UIParent" enableMouse="true" hidden="true" strata="HIGH" clampedtoscreen="true">
+		<Size>
+			<AbsDimension x="310" y="70"/>
+		</Size>
+		<Anchors>
+			<Anchor point="CENTER">
+				<Offset>
+					<AbsDimension x="0" y="0"/>
+				</Offset>
+			</Anchor>
+		</Anchors>
+        <Backdrop bgFile="Interface\TutorialFrame\TutorialFrameBackground" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
+            <EdgeSize val="16"/>
+            <TileSize val="32"/>
+            <BackgroundInsets left="5" right="5" top="5" bottom="5"/>
+        </Backdrop>
+		<Frames>
+            <Button name="BetterAlignButtonAdd" inherits="UIPanelButtonTemplate" text="Add" hidden="false">
+				<Size>
+					<AbsDimension x="70" y="22"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parent">
+						<Offset>
+							<AbsDimension x="15" y="-12"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+                        BetterAlignOptionsPanel:AddButton_OnClick();
+					</OnClick>
+				</Scripts>
+			</Button>
+            <CheckButton name="BetterAlignCheckButtonHorizontal" inherits="UICheckButtonTemplate">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="RIGHT" relativeTo="BetterAlignButtonAdd">
+						<Offset>
+							<AbsDimension x="25" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+                <Scripts>
+                    <OnLoad>
+                        BetterAlignCheckButtonHorizontalText:SetText("Horizontal");
+                    </OnLoad>
+                </Scripts>
+            </CheckButton>
+            <CheckButton name="BetterAlignCheckButtonHide" inherits="UICheckButtonTemplate">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="RIGHT" relativeTo="BetterAlignCheckButtonHorizontal">
+						<Offset>
+							<AbsDimension x="80" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+                <Scripts>
+                    <OnLoad>
+                        BetterAlignCheckButtonHideText:SetText("Hide");
+                    </OnLoad>
+                    <OnClick>
+                        BetterAlignOptionsPanel:Hide_OnClick();
+                    </OnClick>
+                </Scripts>
+            </CheckButton>
+            <CheckButton name="BetterAlignCheckButtonLock" inherits="UICheckButtonTemplate">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="RIGHT" relativeTo="BetterAlignCheckButtonHide">
+						<Offset>
+							<AbsDimension x="50" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+                <Scripts>
+                    <OnLoad>
+                        BetterAlignCheckButtonLockText:SetText("Lock");
+                    </OnLoad>
+                    <OnClick>
+                        BetterAlignOptionsPanel:Lock_OnClick();
+                    </OnClick>
+                </Scripts>
+            </CheckButton>
+            <Button name="BetterAlignButtonClose" inherits="UIPanelButtonTemplate" text="X" hidden="false">
+				<Size>
+					<AbsDimension x="22" y="22"/>
+				</Size>
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="BetterAlignCheckButtonLock">
+						<Offset>
+							<AbsDimension x="50" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+                        BetterAlignOptionsPanel:CloseButton_OnClick();
+					</OnClick>
+				</Scripts>
+			</Button>
+            <Slider name="BetterAlignGridSize" inherits="OptionsSliderTemplate">
+				<Size>
+					<AbsDimension x="205" y="17"/>
+				</Size>
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="BetterAlignButtonAdd">
+						<Offset>
+							<AbsDimension x="0" y="-25" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnValueChanged>
+                        if BetterAlignOptionsPanel.GridSize_OnValueChanged then
+                            BetterAlignOptionsPanel:GridSize_OnValueChanged();
+                        end
+					</OnValueChanged>
+					<OnShow>
+                        local name = this:GetName();
+                        getglobal(name.."High"):SetText("256");
+                        getglobal(name.."Low"):SetText("32");
+
+                        getglobal(name.. "Text"):SetText("32");
+
+                        this:SetMinMaxValues(32, 256);
+                        this:SetValueStep(32);
+                        this:SetValue(32);
+					</OnShow>
+				</Scripts>
+			</Slider>
+            <CheckButton name="BetterAlignCheckButtonGrid" inherits="UICheckButtonTemplate">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="BetterAlignCheckButtonLock">
+						<Offset>
+							<AbsDimension x="0" y="-25"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+                <Scripts>
+                    <OnLoad>
+                        BetterAlignCheckButtonGridText:SetText("Show Grid");
+                    </OnLoad>
+                    <OnClick>
+                        BetterAlignOptionsPanel:Grid_OnClick();
+                    </OnClick>
+                </Scripts>
+            </CheckButton>
+            
+        </Frames>
+		<Scripts>
+			<OnLoad>
+                this:RegisterForDrag("LeftButton");
+			</OnLoad>
+			<OnDragStart>
+                this:StartMoving();
+			</OnDragStart>
+			<OnDragStop>
+                this:StopMovingOrSizing();
+			</OnDragStop>
+		</Scripts>
+	</Frame>
+</Ui>

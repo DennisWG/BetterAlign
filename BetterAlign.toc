@@ -1,0 +1,7 @@
+## Interface: 11200
+## Author: DWG
+## Title: BetterAlign
+## Notes: A better version of Align
+
+BetterAlign.xml
+BetterAlign.lua
