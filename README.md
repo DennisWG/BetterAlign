@@ -1,5 +1,5 @@
 # BetterAlign
-A better version of Align for Vanilla WoW.
+A better version of Align for Vanilla WoW that adds draggable, mirrored helper bars as well as a tidy little GUI on top of the original Addon.
 
 Demo video:
 
