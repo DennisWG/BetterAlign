@@ -12,13 +12,9 @@ BetterAlign.boxSize = 32;
 -- Locks or unlocks the helper bars
 BetterAlign.locked = false;
 
--- Prints an arbitrary amount of variables into the DEFAULT_CHAT_FRAME
-function BetterAlign.Print(...)
-    local message = "";
-    for i=1, table.getn(arg) do
-        message = message..tostring(arg[i]).."    ";
-    end
-    DEFAULT_CHAT_FRAME:AddMessage(message);
+local function round(num, numDecimalPlaces)
+    local mult = 10^(numDecimalPlaces or 0)
+    return math.floor(num * mult + 0.5) / mult
 end
 
 -- Registers various events for the given frame to enable it's behaviour
@@ -26,31 +22,31 @@ end
 -- horizontal: true if helper bar is horizontal, false otherwhise
 function BetterAlign.RegisterEventsForFrame(frame, horizontal)
     -- Highlight on mouse enter
-    frame:SetScript("OnEnter", function()
-        getglobal(frame:GetName().."Texture"):SetTexture(0, 0, 1, 1);
-        getglobal(frame.sibling:GetName().."Texture"):SetTexture(0, 0, 1, 1);
+    frame:SetScript("OnEnter", function(self)
+        getglobal(self:GetName().."Texture"):SetColorTexture(0, 0, 1, 1);
+        getglobal(self.sibling:GetName().."Texture"):SetColorTexture(0, 0, 1, 1);
     end);
     
     -- Unhighlight on mouse exit
-    frame:SetScript("OnLeave", function()
-        if frame.dragging then
+    frame:SetScript("OnLeave", function(self)
+        if self.dragging then
             return;
         end
-        getglobal(frame:GetName().."Texture"):SetTexture(0, 1, 0, 1);
-        getglobal(frame.sibling:GetName().."Texture"):SetTexture(0, 1, 0, 1);
+        getglobal(self:GetName().."Texture"):SetColorTexture(0, 1, 0, 1);
+        getglobal(self.sibling:GetName().."Texture"):SetColorTexture(0, 1, 0, 1);
     end);
 
     -- Update position and color when dragging
-    frame:SetScript("OnDragStart", function()
+    frame:SetScript("OnDragStart", function(self)
         if BetterAlign.locked then
             return;
         end
         
-        frame.dragging = true;
-        getglobal(frame:GetName().."Texture"):SetTexture(0, 0, 1, 1);
-        getglobal(frame.sibling:GetName().."Texture"):SetTexture(0, 0, 1, 1);
+        self.dragging = true;
+        getglobal(self:GetName().."Texture"):SetColorTexture(0, 0, 1, 1);
+        getglobal(self.sibling:GetName().."Texture"):SetColorTexture(0, 0, 1, 1);
         -- Follow mouse and mirror movement on sibling bar
-        frame:SetScript("OnUpdate", function()
+        self:SetScript("OnUpdate", function(self)
             local scale, x, y = UIParent:GetEffectiveScale(), GetCursorPosition();
             local xdiff, ydiff;
             local screenMiddle;
@@ -67,20 +63,29 @@ function BetterAlign.RegisterEventsForFrame(frame, horizontal)
                 xdiff = x / scale - screenMiddle;
                 anchor = "LEFT";
             end
-            
-            frame:SetPoint(anchor, xdiff + screenMiddle, ydiff + screenMiddle);
-            frame.sibling:SetPoint(anchor, -xdiff + screenMiddle, -ydiff + screenMiddle);
-            frame:SetUserPlaced(true);
-            frame.sibling:SetUserPlaced(true);
+
+            local x1 = xdiff + screenMiddle;
+            local x2 = -xdiff + screenMiddle;
+
+            if x1 > screenMiddle then
+                x1 = x1 - self:GetSize()
+            else
+                x2 = x2 - self:GetSize()
+            end
+
+            self:SetPoint(anchor, x1, ydiff + screenMiddle);
+            self.sibling:SetPoint(anchor, x2, -ydiff + screenMiddle);
+            self:SetUserPlaced(true);
+            self.sibling:SetUserPlaced(true);
         end);
     end);
     
     -- Restore color when finished dragging
-    frame:SetScript("OnDragStop", function()
-        frame.dragging = nil;
-        getglobal(frame:GetName().."Texture"):SetTexture(0, 1, 0, 1);
-        getglobal(frame.sibling:GetName().."Texture"):SetTexture(0, 1, 0, 1);
-        frame:SetScript("OnUpdate", nil);
+    frame:SetScript("OnDragStop", function(self)
+        self.dragging = nil;
+        getglobal(self:GetName().."Texture"):SetColorTexture(0, 1, 0, 1);
+        getglobal(self.sibling:GetName().."Texture"):SetColorTexture(0, 1, 0, 1);
+        self:SetScript("OnUpdate", nil);
     end);
 end
 
@@ -91,7 +96,7 @@ function BetterAlignOptionsPanel:AddButton_OnClick()
 	BetterAlign.Parent:SetAllPoints(UIParent);
     
     local kids = { BetterAlign.Parent:GetChildren() };
-    local num = table.getn(kids);
+    local num = BetterAlign.num or 0;
     local name1 = "MoveFrame"..num;
     local name2 = "MoveFrame"..(num + 1);
     local frame1, frame2;
@@ -110,6 +115,7 @@ function BetterAlignOptionsPanel:AddButton_OnClick()
         
     BetterAlign.RegisterEventsForFrame(frame1, horizontal);
     BetterAlign.RegisterEventsForFrame(frame2, horizontal);
+    BetterAlign.num = num + 2;
 end
 
 -- Handles the check button press of the "BetterAlignCheckButtonHide"
@@ -202,9 +208,9 @@ function BetterAlign.CreateGrid()
 	for i = 0, BetterAlign.boxSize do 
 		local tx = BetterAlign.grid:CreateTexture(nil, 'BACKGROUND') 
 		if i == BetterAlign.boxSize / 2 then 
-			tx:SetTexture(1, 0, 0, 0.5) 
+			tx:SetColorTexture(1, 0, 0, 0.5) 
 		else 
-			tx:SetTexture(0, 0, 0, 0.5) 
+			tx:SetColorTexture(0, 0, 0, 0.5) 
 		end 
 		tx:SetPoint("TOPLEFT", BetterAlign.grid, "TOPLEFT", i*wStep - (size/2), 0) 
 		tx:SetPoint('BOTTOMRIGHT', BetterAlign.grid, 'BOTTOMLEFT', i*wStep + (size/2), 0) 
@@ -213,24 +219,23 @@ function BetterAlign.CreateGrid()
 	
 	do
 		local tx = BetterAlign.grid:CreateTexture(nil, 'BACKGROUND') 
-		tx:SetTexture(1, 0, 0, 0.5)
+		tx:SetColorTexture(1, 0, 0, 0.5)
 		tx:SetPoint("TOPLEFT", BetterAlign.grid, "TOPLEFT", 0, -(height/2) + (size/2))
 		tx:SetPoint('BOTTOMRIGHT', BetterAlign.grid, 'TOPRIGHT', 0, -(height/2 + size/2))
 	end
     
 	for i = 1, math.floor((height/2)/hStep) do
 		local tx = BetterAlign.grid:CreateTexture(nil, 'BACKGROUND') 
-		tx:SetTexture(0, 0, 0, 0.5)
+		tx:SetColorTexture(0, 0, 0, 0.5)
 		
 		tx:SetPoint("TOPLEFT", BetterAlign.grid, "TOPLEFT", 0, -(height/2+i*hStep) + (size/2))
 		tx:SetPoint('BOTTOMRIGHT', BetterAlign.grid, 'TOPRIGHT', 0, -(height/2+i*hStep + size/2))
 		
 		tx = BetterAlign.grid:CreateTexture(nil, 'BACKGROUND') 
-		tx:SetTexture(0, 0, 0, 0.5)
+		tx:SetColorTexture(0, 0, 0, 0.5)
 		
 		tx:SetPoint("TOPLEFT", BetterAlign.grid, "TOPLEFT", 0, -(height/2-i*hStep) + (size/2))
 		tx:SetPoint('BOTTOMRIGHT', BetterAlign.grid, 'TOPRIGHT', 0, -(height/2-i*hStep + size/2))
-		
 	end
 end
 

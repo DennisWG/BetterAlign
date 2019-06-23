@@ -1,5 +1,5 @@
-## Interface: 11200
-## Author: DWG
+## Interface: 11302
+## Author: DWG (Ike)
 ## Title: BetterAlign
 ## Notes: A better version of Align
 

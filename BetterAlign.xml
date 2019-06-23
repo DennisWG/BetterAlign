@@ -20,8 +20,8 @@
         </Layers>
         <Scripts>
             <OnLoad>
-                this:SetHeight(GetScreenHeight() * 4);
-                this:RegisterForDrag("LeftButton");
+                self:SetHeight(GetScreenHeight() * 4);
+                self:RegisterForDrag("LeftButton");
             </OnLoad>
         </Scripts>
     </Frame>
@@ -46,8 +46,8 @@
         </Layers>
         <Scripts>
             <OnLoad>
-                this:SetWidth(GetScreenWidth() * 4);
-                this:RegisterForDrag("LeftButton");
+                self:SetWidth(GetScreenWidth() * 4);
+                self:RegisterForDrag("LeftButton");
             </OnLoad>
         </Scripts>
     </Frame>
@@ -178,15 +178,16 @@
                         end
 					</OnValueChanged>
 					<OnShow>
-                        local name = this:GetName();
+                        local name = self:GetName();
                         getglobal(name.."High"):SetText("256");
                         getglobal(name.."Low"):SetText("32");
 
                         getglobal(name.. "Text"):SetText("32");
 
-                        this:SetMinMaxValues(32, 256);
-                        this:SetValueStep(32);
-                        this:SetValue(32);
+                        self:SetMinMaxValues(32, 256);
+						self:SetObeyStepOnDrag(true);
+                        self:SetValueStep(32);
+                        self:SetValue(32);
 					</OnShow>
 				</Scripts>
 			</Slider>
@@ -214,13 +215,13 @@
         </Frames>
 		<Scripts>
 			<OnLoad>
-                this:RegisterForDrag("LeftButton");
+                self:RegisterForDrag("LeftButton");
 			</OnLoad>
 			<OnDragStart>
-                this:StartMoving();
+                self:StartMoving();
 			</OnDragStart>
 			<OnDragStop>
-                this:StopMovingOrSizing();
+                self:StopMovingOrSizing();
 			</OnDragStop>
 		</Scripts>
 	</Frame>
