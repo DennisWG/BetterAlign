@@ -94,9 +94,10 @@ end
 function BetterAlignOptionsPanel:AddButton_OnClick()
     BetterAlign.Parent = BetterAlign.Parent or CreateFrame('Frame', nil, UIParent);
 	BetterAlign.Parent:SetAllPoints(UIParent);
+
+    BetterAlign.Parent.Children = BetterAlign.Parent.Children or {};
     
-    local kids = { BetterAlign.Parent:GetChildren() };
-    local num = BetterAlign.num or 0;
+    local num = #BetterAlign.Parent.Children;
     local name1 = "MoveFrame"..num;
     local name2 = "MoveFrame"..(num + 1);
     local frame1, frame2;
@@ -109,13 +110,15 @@ function BetterAlignOptionsPanel:AddButton_OnClick()
         frame1 = CreateFrame("Frame", name1, BetterAlign.Parent, "BetterAlignVerticalFrame");
         frame2 = CreateFrame("Frame", name2, BetterAlign.Parent, "BetterAlignVerticalFrame");
     end
+
+    table.insert(BetterAlign.Parent.Children, frame1);
+    table.insert(BetterAlign.Parent.Children, frame2);
     
     frame1.sibling = frame2;
     frame2.sibling = frame1;
         
     BetterAlign.RegisterEventsForFrame(frame1, horizontal);
     BetterAlign.RegisterEventsForFrame(frame2, horizontal);
-    BetterAlign.num = num + 2;
 end
 
 -- Handles the check button press of the "BetterAlignCheckButtonHide"
@@ -125,8 +128,7 @@ function BetterAlignOptionsPanel:Hide_OnClick(hide)
         return;
     end
     
-    local kids = { BetterAlign.Parent:GetChildren() };
-    for k, v in pairs(kids) do
+    for k, v in pairs(BetterAlign.Parent.Children) do
         if BetterAlignCheckButtonHide:GetChecked() or hide then
             v:Hide();
         else
